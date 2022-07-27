@@ -44,6 +44,11 @@ func (mb *rtuTCPTransporter) Send(aduRequest []byte) (aduResponse []byte, err er
 	if err = mb.connect(); err != nil {
 		return
 	}
+
+	// clear read buf
+	mb.conn.SetDeadline(time.Now().Add(100 * time.Microsecond))
+	io.ReadAll(mb.conn)
+
 	// Set timer to close when idle
 	mb.lastActivity = time.Now()
 	mb.startCloseTimer()
